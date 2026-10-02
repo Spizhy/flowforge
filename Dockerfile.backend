@@ -1,0 +1,19 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY src/backend/FlowForge.Core/FlowForge.Core.csproj FlowForge.Core/
+COPY src/backend/FlowForge.Infrastructure/FlowForge.Infrastructure.csproj FlowForge.Infrastructure/
+COPY src/backend/FlowForge.Api/FlowForge.Api.csproj FlowForge.Api/
+RUN dotnet restore FlowForge.Api/FlowForge.Api.csproj
+
+COPY src/backend/ .
+RUN dotnet publish FlowForge.Api/FlowForge.Api.csproj -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+EXPOSE 5060
+ENV ASPNETCORE_URLS=http://+:5060
+ENV ASPNETCORE_ENVIRONMENT=Production
+
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "FlowForge.Api.dll"]

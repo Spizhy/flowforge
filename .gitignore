@@ -1,0 +1,16 @@
+# .NET
+bin/
+obj/
+*.suo
+*.user
+.vs/
+*.db
+TestResults/
+
+# Node
+node_modules/
+dist/
+.DS_Store
+
+# Secrets
+.env
